@@ -14,11 +14,12 @@ public class Tests
     [SetUp]
     public void Setup()
     {
+     
     }
 
     [Test]
     //MethodName_StateUnderTest_ExpectedBehavior
-    public async Task GetInformation__HttpGet_ReturnInformation()
+    public async Task GetHero__ShouldReturn_OKAndSuperHero()
     {
         //Arrange
         //1.Set up In-Memory DB
@@ -50,6 +51,28 @@ public class Tests
             //List<SuperHero> heroes = result.Result as List<SuperHero>;
             //Assert
             Assert.AreEqual(3, heroes.Count);
+        }
+    }
+    [Test]
+    //MethodName_StateUnderTest_ExpectedBehavior
+    public async Task PostHero__ShouldReturn_OK()
+    {
+        //Arrange
+        //1.Set up In-Memory DB
+        var options = new DbContextOptionsBuilder<DataContext>()
+            .UseInMemoryDatabase(databaseName: "SuperHero")
+            .Options;
+
+        using (var context = new DataContext(options))
+        {
+            var superHeroController = new SuperHeroController(context);
+            //Act
+            var hero = new SuperHero() { Name = "TestHero", LastName = "LastName", FirstName = "FirstName", Place = "Taiwan" };
+            var result = await superHeroController.CreateSuperhero(hero);
+            var okResult = result.Result as OkObjectResult;
+            //Assert
+            Assert.IsNotNull(okResult);
+            Assert.AreEqual(200, okResult.StatusCode);
         }
     }
 }
